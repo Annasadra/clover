@@ -42,6 +42,7 @@ use clover_traits::IncentiveOps;
 
 mod simple_graph;
 
+pub mod benchmarking;
 mod mock;
 mod tests;
 

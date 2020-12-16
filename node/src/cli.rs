@@ -37,6 +37,9 @@ pub enum Subcommand {
 
   /// Revert the chain to a previous state.
   Revert(sc_cli::RevertCmd),
+
+  #[structopt(name = "benchmark", about = "Benchmark runtime pallets.")]
+  Benchmark(frame_benchmarking_cli::BenchmarkCmd),
 }
 
 #[derive(Debug, StructOpt)]

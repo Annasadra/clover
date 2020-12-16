@@ -50,4 +50,6 @@ std = [
   'serde',
   'sp-runtime/std',
   'sp-std/std',
+  "frame-benchmarking/std",
 ]
+runtime-benchmarks = ["frame-benchmarking"]
