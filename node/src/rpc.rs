@@ -103,6 +103,7 @@ pub fn create_full<C, P, SC, B>(
   C::Api: fp_rpc::EthereumRuntimeRPCApi<Block>,
   C::Api: BabeApi<Block>,
   C::Api: BlockBuilder<Block>,
+  C::Api: owner_manager_runtime_api::OwnerManagerApi<Block>,
   P: TransactionPool<Block=Block> + 'static,
   SC: SelectChain<Block> +'static,
   B: sc_client_api::Backend<Block> + Send + Sync + 'static,
@@ -190,6 +191,10 @@ pub fn create_full<C, P, SC, B>(
 
   io.extend_with(clover_rpc::incentive_pool::IncentivePoolRpc::to_delegate(
     clover_rpc::incentive_pool::IncentivePool::new(client.clone()),
+  ));
+
+  io.extend_with(owner_manager_rpc::OwnerManagerApi::to_delegate(
+    owner_manager_rpc::OwnerManager::new(client.clone()),
   ));
 
   let mut signers = Vec::new();

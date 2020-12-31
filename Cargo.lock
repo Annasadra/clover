@@ -774,6 +774,8 @@ dependencies = [
  "hex-literal",
  "jsonrpc-core 15.1.0",
  "jsonrpc-pubsub 15.1.0",
+ "owner-manager-rpc",
+ "owner-manager-runtime-api",
  "pallet-contracts",
  "pallet-contracts-rpc",
  "pallet-transaction-payment-rpc",
@@ -851,6 +853,7 @@ dependencies = [
  "frame-system",
  "hex-slice",
  "impl-trait-for-tuples",
+ "owner-manager",
  "pallet-balances",
  "pallet-timestamp",
  "parity-scale-codec",
@@ -999,6 +1002,8 @@ dependencies = [
  "orml-oracle",
  "orml-tokens",
  "orml-traits",
+ "owner-manager",
+ "owner-manager-runtime-api",
  "pallet-authorship",
  "pallet-babe",
  "pallet-balances",
@@ -4348,6 +4353,48 @@ dependencies = [
  "serde",
  "sp-io",
  "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
+name = "owner-manager"
+version = "0.1.0"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "parity-scale-codec",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-serializer",
+ "sp-std",
+]
+
+[[package]]
+name = "owner-manager-rpc"
+version = "0.9.0"
+dependencies = [
+ "jsonrpc-core 15.1.0",
+ "jsonrpc-core-client 15.1.0",
+ "jsonrpc-derive 15.1.0",
+ "owner-manager-runtime-api",
+ "parity-scale-codec",
+ "serde",
+ "sp-api",
+ "sp-blockchain",
+ "sp-core",
+ "sp-rpc",
+ "sp-runtime",
+]
+
+[[package]]
+name = "owner-manager-runtime-api"
+version = "0.9.0"
+dependencies = [
+ "clover-primitives",
+ "parity-scale-codec",
+ "sp-api",
+ "sp-core",
  "sp-std",
 ]
 

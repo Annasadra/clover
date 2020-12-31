@@ -63,6 +63,8 @@ fc-rpc = { path = "../rpc/client/rpc" }
 fp-rpc = { path = "../primitives/rpc" }
 fc-consensus = { path = "../rpc/client/consensus" }
 primitive-types = { version = "0.7.0", default-features = false, features = ["rlp", "byteorder"] }
+owner-manager-rpc = { path = "../modules/owner-manager/rpc" }
+owner-manager-runtime-api = { path = "../modules/owner-manager/runtime-api" }
 
 [build-dependencies.substrate-build-script-utils]
 version = '2.0.0'

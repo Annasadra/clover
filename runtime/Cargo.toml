@@ -22,6 +22,8 @@ clover-evm = { path = "../modules/clover-evm", default-features = false }
 clover-ethereum = { path = "../modules/clover-ethereum", default-features = false }
 fp-rpc = { path = "../primitives/rpc", default-features = false  }
 primitives = { default-features = false, package = 'clover-primitives', path = '../primitives', version = '0.9.0'}
+owner-manager = { path = "../modules/owner-manager", default-features = false }
+owner-manager-runtime-api = { path = "../modules/owner-manager/runtime-api", default-features = false}
 
 enum-iterator = "0.6.0"
 codec = {default-features = false, package = 'parity-scale-codec', version = '1.3.4' }

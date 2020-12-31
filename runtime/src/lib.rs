@@ -936,6 +936,10 @@ impl clover_prices::Trait for Runtime {
   type LockOrigin = EnsureRootOrHalfGeneralCouncil;
 }
 
+impl owner_manager::Trait for Runtime {
+  type Event = Event;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
   pub enum Runtime where
@@ -994,6 +998,8 @@ construct_runtime!(
     // Utility module.
     Scheduler: pallet_scheduler::{Module, Call, Storage, Event<T>},
     Utility: pallet_utility::{Module, Call, Event},
+
+     OwnerManager: owner_manager::{Module, Call, Storage, Event<T>},
   }
 );
 
@@ -1389,5 +1395,11 @@ impl_runtime_apis! {
             Ethereum::current_transaction_statuses()
         )
     }
+  }
+  
+  impl owner_manager_runtime_api::OwnerManagerApi<Block> for Runtime {
+        fn get_owner_address(contract_address: Option<H160>) -> Option<H160> {
+            OwnerManager::get_owner_address(contract_address)
+        }
   }
 }

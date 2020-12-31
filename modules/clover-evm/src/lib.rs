@@ -176,7 +176,7 @@ impl Get<u64> for SystemChainId {
 static ISTANBUL_CONFIG: Config = Config::istanbul();
 
 /// EVM module trait
-pub trait Trait: frame_system::Trait + pallet_timestamp::Trait {
+pub trait Trait: frame_system::Trait + pallet_timestamp::Trait + owner_manager::Trait {
 	/// Calculator for current gas price.
 	type FeeCalculator: FeeCalculator;
 
