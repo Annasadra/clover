@@ -8,15 +8,79 @@
 mod test;
 
 use frame_support::{decl_error, decl_event, decl_module, decl_storage, dispatch, ensure};
+// use frame_system::{ensure_signed, RawOrigin, Origin};
 use frame_system::ensure_signed;
 use sp_core::H160;
 use sp_std::prelude::*;
-// use sp_runtime::print;
+// use sp_runtime::traits::BadOrigin;
+// use sp_core::crypto::AccountId32;
+
+// pub trait EnsureAddressOrigin<OuterOrigin> {
+//     /// Success return type
+//     type Success;
+//
+//     /// Perform the origin check.
+//     fn ensure_address_origin(
+//         address: &H160,
+//         origin: OuterOrigin,
+//     ) -> Result<Self::Success, BadOrigin> {
+//         Self::try_address_origin(address, origin).map_err(|_| BadOrigin)
+//     }
+//
+//     /// Try with origin
+//     fn try_address_origin(
+//         address: &H160,
+//         origin: OuterOrigin,
+//     ) -> Result<Self::Success, OuterOrigin>;
+// }
+//
+// /// Ensure that the EVM address is the same as the Substrate address. This only works if the account
+// /// ID is 'H160'.
+// pub struct EnsureAddressSame;
+//
+// impl <OuterOrigin> EnsureAddressOrigin<OuterOrigin> for EnsureAddressSame
+//     where OuterOrigin: Into<Result<RawOrigin<H160>, OuterOrigin>> + From<RawOrigin<H160>>,
+// {
+//     type Success = H160;
+//     fn try_address_origin (
+//         address: &H160,
+//         origin: OuterOrigin,
+//     ) -> Result<H160, OuterOrigin> {
+//         origin.into().and_then(|o| match o {
+//             RawOrigin::Signed(who)  if &who == address => Ok(who),
+//             r => Err(OuterOrigin::from(r)),
+//         })
+//     }
+// }
+//
+// /// Ensure that the address is truncated hash of the origin. Only works id the account id is
+// /// 'AccountId32'.
+// pub struct EnsureAddress;
+//
+// impl<OuterOrigin> EnsureAddressOrigin<OuterOrigin> for EnsureAddress where
+//     OuterOrigin: Into<Result<RawOrigin<AccountId32>, OuterOrigin>> + From<RawOrigin<AccountId32>>,
+// {
+//     type Success = AccountId32;
+//
+//     fn try_address_origin(
+//         address: &H160,
+//         origin: OuterOrigin,
+//     ) -> Result<AccountId32, OuterOrigin> {
+//         origin.into().and_then(|o| match o {
+//             RawOrigin::Signed(who)
+//                 if AsRef::<[u8; 32]>::as_ref(&who)[0..20] == address[0..20] => Ok(who),
+//             r => Err(OuterOrigin::from(r))
+//         })
+//     }
+// }
 
 /// The module's configuration trait
 pub trait Trait: frame_system::Trait {
     /// The overarching event type.
     type Event: From<Event<Self>> + Into<<Self as frame_system::Trait>::Event>;
+
+    // Allow the origin to call
+    // type CallOwner: EnsureAddressOrigin<Self::Origin>;
 }
 
 // The pallet's runtime storage items.
@@ -67,14 +131,18 @@ decl_module! {
         // V - transfer owner address
         #[weight = 0]
         pub fn manager_owner(origin, contract_address: H160, source_owner_address: H160) -> dispatch::DispatchResult {
+            // T::CallOwner::ensure_address_origin(&contract_address, origin)?;
+            // debug::info!("Into owner manager");
             let sender = ensure_signed(origin)?;
 
             // identify contract address is exist, to insert (K-V) or mutate (value)
             if OwnerMaps::contains_key(&contract_address) { // exist so, mutate V
+                // debug::info!("contain contract address");
                 ensure!(OwnerMaps::contains_key(&contract_address), Error::<T>::ContractAddressNotExist);
                 OwnerMaps::mutate(contract_address, |old_value| *old_value = source_owner_address);
 
             } else { // no exist so, insert K-V
+                // debug::info!("no contain contract address");
                 ensure!(!OwnerMaps::contains_key(&contract_address), Error::<T>::ContractAddressAlreadyExist);
                 OwnerMaps::insert(contract_address, source_owner_address);
             }

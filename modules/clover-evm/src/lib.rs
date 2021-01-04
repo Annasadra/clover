@@ -176,7 +176,7 @@ impl Get<u64> for SystemChainId {
 static ISTANBUL_CONFIG: Config = Config::istanbul();
 
 /// EVM module trait
-pub trait Trait: frame_system::Trait + pallet_timestamp::Trait + owner_manager::Trait {
+pub trait Trait: frame_system::Trait + pallet_timestamp::Trait {
 	/// Calculator for current gas price.
 	type FeeCalculator: FeeCalculator;
 
@@ -185,6 +185,7 @@ pub trait Trait: frame_system::Trait + pallet_timestamp::Trait + owner_manager::
 
 	/// Allow the origin to call on behalf of given address.
 	type CallOrigin: EnsureAddressOrigin<Self::Origin>;
+
 	/// Allow the origin to withdraw on behalf of given address.
 	type WithdrawOrigin: EnsureAddressOrigin<Self::Origin, Success=Self::AccountId>;
 

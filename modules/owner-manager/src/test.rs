@@ -56,6 +56,7 @@ impl frame_system::Trait for Test {
 
 impl Trait for Test {
     type Event = ();
+    // type CallOwner = EnsureAddress;
 }
 
 type OwnerManager = Module<Test>;
