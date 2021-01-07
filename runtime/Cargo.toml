@@ -20,6 +20,7 @@ clover-loans = { path = "../modules/loans", default-features = false }
 clover-rpc-runtime-api = { path = "../rpc/runtime-api", default-features = false }
 clover-evm = { path = "../modules/clover-evm", default-features = false }
 clover-ethereum = { path = "../modules/clover-ethereum", default-features = false }
+ladder-payment = { path = "../modules/ladder-payment", default-features = false }
 fp-rpc = { path = "../primitives/rpc", default-features = false  }
 primitives = { default-features = false, package = 'clover-primitives', path = '../primitives', version = '0.9.0'}
 
@@ -46,7 +47,6 @@ pallet-randomness-collective-flip = {default-features = false, version = '2.0.0'
 pallet-staking-reward-curve = {default-features = false, version = '2.0.0' }
 pallet-sudo = {default-features = false, version = '2.0.0' }
 pallet-timestamp = {default-features = false, version = '2.0.0' }
-pallet-transaction-payment = {default-features = false, version = '2.0.0' }
 pallet-transaction-payment-rpc-runtime-api = {default-features = false, version = '2.0.0' }
 serde = {features = ['derive'], optional = true, version = '1.0.101' }
 sp-api = {default-features = false, version = '2.0.0' }
@@ -87,6 +87,7 @@ std = [
     'frame-support/std',
     'frame-system/std',
     'frame-system-rpc-runtime-api/std',
+    'ladder-payment/std',
     'orml-currencies/std',
     'orml-tokens/std',
     'orml-traits/std',
@@ -107,7 +108,6 @@ std = [
     'pallet-randomness-collective-flip/std',
     'pallet-sudo/std',
     'pallet-timestamp/std',
-    'pallet-transaction-payment/std',
     'pallet-transaction-payment-rpc-runtime-api/std',
     'serde',
     'sp-api/std',

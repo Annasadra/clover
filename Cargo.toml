@@ -10,4 +10,5 @@ members = [
     'modules/reward-pool',
     'modules/incentives',
     'modules/traits',
+    'modules/ladder-payment',
 ]

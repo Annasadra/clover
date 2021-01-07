@@ -700,7 +700,7 @@ parameter_types! {
   pub const TransactionByteFee: Balance = 1;
 }
 
-impl pallet_transaction_payment::Trait for Runtime {
+impl ladder_payment::Trait for Runtime {
   type Currency = Balances;
   type OnTransactionPayment = ();
   type TransactionByteFee = TransactionByteFee;
@@ -756,7 +756,7 @@ where
       frame_system::CheckEra::<Runtime>::from(generic::Era::mortal(period, current_block)),
       frame_system::CheckNonce::<Runtime>::from(nonce),
       frame_system::CheckWeight::<Runtime>::new(),
-      pallet_transaction_payment::ChargeTransactionPayment::<Runtime>::from(tip),
+      ladder_payment::ChargeTransactionPayment::<Runtime>::from(tip),
     );
     let raw_payload = SignedPayload::new(call, extra)
       .map_err(|e| {
@@ -911,7 +911,7 @@ impl pallet_contracts::Trait for Runtime {
   type SurchargeReward = SurchargeReward;
   type MaxDepth = pallet_contracts::DefaultMaxDepth;
   type MaxValueSize = pallet_contracts::DefaultMaxValueSize;
-  type WeightPrice = pallet_transaction_payment::Module<Self>;
+  type WeightPrice = ladder_payment::Module<Self>;
 }
 
 parameter_types! {
@@ -953,7 +953,7 @@ construct_runtime!(
 
     Indices: pallet_indices::{Module, Call, Storage, Config<T>, Event<T>},
     Balances: pallet_balances::{Module, Call, Storage, Config<T>, Event<T>},
-    TransactionPayment: pallet_transaction_payment::{Module, Storage},
+    TransactionPayment: ladder_payment::{Module, Storage},
 
     Staking: pallet_staking::{Module, Call, Config<T>, Storage, Event<T>},
     Session: pallet_session::{Module, Call, Storage, Event, Config<T>},
@@ -1015,7 +1015,7 @@ pub type SignedExtra = (
   frame_system::CheckEra<Runtime>,
   frame_system::CheckNonce<Runtime>,
   frame_system::CheckWeight<Runtime>,
-  pallet_transaction_payment::ChargeTransactionPayment<Runtime>,
+  ladder_payment::ChargeTransactionPayment<Runtime>,
 );
 /// Unchecked extrinsic type as expected by this runtime.
 pub type UncheckedExtrinsic = generic::UncheckedExtrinsic<Address, Call, Signature, SignedExtra>;
