@@ -844,6 +844,7 @@ dependencies = [
 name = "clover-evm"
 version = "0.9.0"
 dependencies = [
+ "clover-traits",
  "evm",
  "evm-core",
  "evm-gasometer",
@@ -4360,6 +4361,7 @@ dependencies = [
 name = "owner-manager"
 version = "0.1.0"
 dependencies = [
+ "clover-traits",
  "frame-support",
  "frame-system",
  "parity-scale-codec",

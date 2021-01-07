@@ -317,6 +317,7 @@ impl clover_evm::Trait for Runtime {
     clover_evm::precompiles::Identity,
   );
   type ChainId = ChainId;
+  type OwnerManager = OwnerManager;
 }
 
 pub struct EthereumFindAuthor<F>(PhantomData<F>);

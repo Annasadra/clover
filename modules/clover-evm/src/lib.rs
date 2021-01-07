@@ -21,6 +21,7 @@ use frame_system::RawOrigin;
 use sp_core::{U256, H256, H160, Hasher};
 use sp_runtime::{AccountId32, traits::{UniqueSaturatedInto, BadOrigin}};
 use evm::Config;
+use clover_traits::OwnerManagerOps;
 
 /// Type alias for currency balance.
 pub type BalanceOf<T> = <<T as Trait>::Currency as Currency<<T as frame_system::Trait>::AccountId>>::Balance;
@@ -202,6 +203,8 @@ pub trait Trait: frame_system::Trait + pallet_timestamp::Trait {
 	type ChainId: Get<u64>;
 	/// EVM execution runner.
 	type Runner: Runner<Self>;
+
+	type OwnerManager: OwnerManagerOps;
 
 	/// EVM config used in the module.
 	fn config() -> &'static Config {

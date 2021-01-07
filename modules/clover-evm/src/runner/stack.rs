@@ -10,10 +10,10 @@ use evm::backend::{Backend as BackendT, ApplyBackend, Apply};
 use evm::executor::StackExecutor;
 use crate::{Trait, AccountStorages, FeeCalculator, AccountCodes, Module, Event, Error, AddressMapping};
 use crate::runner::Runner as RunnerT;
-use crate::AccountConnection;
 use crate::precompiles::Precompiles;
 extern crate hex_slice;
 use hex_slice::AsHex;
+use clover_traits::OwnerManagerOps;
 
 #[derive(Default)]
 pub struct Runner<T: Trait> {
@@ -83,8 +83,10 @@ impl<T: Trait> Runner<T> {
 		}
 
 		for i in 0..internal_transactions.len() {
-			if AccountConnection::contains_key(internal_transactions[i].node) {
-				let candidate = AccountConnection::get(internal_transactions[i].node);
+			// if AccountConnection::contains_key(internal_transactions[i].node) {
+			if T::OwnerManager::contain_key(internal_transactions[i].node) {
+				// let candidate = AccountConnection::get(internal_transactions[i].node);
+				let candidate = T::OwnerManager::get(internal_transactions[i].node);
 				let amount = dev_bonus.unwrap_or(U256::zero()).saturating_mul(internal_transactions[i].gas_used).checked_div(total_gas);
 				executor.deposit(candidate, amount.unwrap_or(U256::zero()));
 				internal_transactions[i].developer = Some(candidate);
@@ -166,7 +168,8 @@ impl<T: Trait> RunnerT<T> for Runner<T> {
 
 				debug::info!("CLOVER EVM CREATE [deployer: {:?}, address: {:?}, code: {:02x}]", source, address, init.as_hex());
 
-				AccountConnection::insert(address, source);
+				// AccountConnection::insert(address, source);
+				let _ = T::OwnerManager::manager_owner(address, source);
 
 				(executor.transact_create(
 					source,
