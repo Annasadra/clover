@@ -55,7 +55,7 @@ pub struct TokenInfo<AccountId, Data> {
 	pub data: Data,
 }
 
-pub trait Config: frame_system::Trait {
+pub trait Config: frame_system::Config {
 	/// The class ID type
 	type ClassId: Parameter + Member + AtLeast32BitUnsigned + Default + Copy;
 	/// The token ID type
@@ -88,8 +88,8 @@ decl_error! {
 }
 
 pub type ClassInfoOf<T> =
-	ClassInfo<<T as Config>::TokenId, <T as frame_system::Trait>::AccountId, <T as Config>::ClassData>;
-pub type TokenInfoOf<T> = TokenInfo<<T as frame_system::Trait>::AccountId, <T as Config>::TokenData>;
+	ClassInfo<<T as Config>::TokenId, <T as frame_system::Config>::AccountId, <T as Config>::ClassData>;
+pub type TokenInfoOf<T> = TokenInfo<<T as frame_system::Config>::AccountId, <T as Config>::TokenData>;
 
 decl_storage! {
 	trait Store for Module<T: Config> as NonFungibleToken {

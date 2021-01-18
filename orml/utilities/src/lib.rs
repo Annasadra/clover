@@ -37,7 +37,7 @@ mod tests {
 	use sp_io::TestExternalities;
 	use sp_runtime::{DispatchError, DispatchResult};
 
-	pub trait Config: frame_system::Trait {}
+	pub trait Config: frame_system::Config {}
 
 	decl_module! {
 		pub struct Module<T: Config> for enum Call where origin: T::Origin {}

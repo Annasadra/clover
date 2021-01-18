@@ -53,7 +53,7 @@ pub fn new_partial(config: &Configuration) -> Result<sc_service::PartialComponen
 >, ServiceError> {
   let inherent_data_providers = sp_inherents::InherentDataProviders::new();
 
-  let (client, backend, keystore, task_manager) =
+  let (client, backend, keystore_container, task_manager) =
     sc_service::new_full_parts::<Block, RuntimeApi, Executor>(&config)?;
   let client = Arc::new(client);
 
@@ -83,7 +83,6 @@ pub fn new_partial(config: &Configuration) -> Result<sc_service::PartialComponen
     babe_link.clone(),
     block_import.clone(),
     Some(Box::new(justification_import.clone())),
-    None,
     client.clone(),
     select_chain.clone(),
     inherent_data_providers.clone(),
@@ -108,7 +107,7 @@ pub fn new_partial(config: &Configuration) -> Result<sc_service::PartialComponen
 
 
   Ok(sc_service::PartialComponents {
-    client, backend, task_manager, keystore, select_chain, import_queue, transaction_pool,
+    client, backend, task_manager, keystore_container, select_chain, import_queue, transaction_pool,
     inherent_data_providers,
     other: (rpc_extensions_builder, import_setup, rpc_setup)
   })
@@ -128,7 +127,7 @@ pub fn new_full_base(config: Configuration,
   Arc<sc_transaction_pool::FullPool<Block, FullClient>>,
 ), ServiceError> {
   let sc_service::PartialComponents {
-    client, backend, mut task_manager, import_queue, keystore, select_chain, transaction_pool,
+    client, backend, mut task_manager, import_queue, keystore_container, select_chain, transaction_pool,
     inherent_data_providers,
     other: (_, import_setup, _rpc_setup),
   } = new_partial(&config)?;
@@ -145,8 +144,8 @@ pub fn new_full_base(config: Configuration,
       import_queue,
       on_demand: None,
       block_announce_validator_builder: None,
-      finality_proof_request_builder: None,
-      finality_proof_provider: Some(finality_proof_provider.clone()),
+      //finality_proof_request_builder: None,
+      //finality_proof_provider: Some(finality_proof_provider.clone()),
     })?;
 
   if config.offchain_worker.enabled {
@@ -157,6 +156,7 @@ pub fn new_full_base(config: Configuration,
 
   let role = config.role.clone();
   let force_authoring = config.force_authoring;
+  let backoff_authoring_blocks = Some(sc_consensus_slots::BackoffAuthoringOnFinalizedHeadLagging::default());
   let name = config.network.node_name.clone();
   let enable_grandpa = !config.disable_grandpa;
   let prometheus_registry = config.prometheus_registry().cloned();
@@ -175,6 +175,7 @@ pub fn new_full_base(config: Configuration,
   let copy_network = network.clone();
   let copy_client = client.clone();
   let copy_role = config.role.clone();
+  let keystore = keystore_container.sync_keystore();
   let copy_keystore = keystore.clone();
   let copy_select_chain = select_chain.clone();
   let rpc_extensions_builder = move |_deny_unsafe, _subscription_executor| {
@@ -218,10 +219,11 @@ pub fn new_full_base(config: Configuration,
     backend, network_status_sinks, system_rpc_tx, config,
   })?;
 
-  (with_startup_data)(&block_import, &babe_link);
+ (with_startup_data)(&block_import, &babe_link);
 
   if role.is_authority() {
     let proposer = sc_basic_authorship::ProposerFactory::new(
+      task_manager.spawn_handle(),
       client.clone(),
       transaction_pool.clone(),
       prometheus_registry.as_ref(),
@@ -238,6 +240,7 @@ pub fn new_full_base(config: Configuration,
       block_import,
       sync_oracle: network.clone(),
       inherent_data_providers: inherent_data_providers.clone(),
+      backoff_authoring_blocks,
       force_authoring,
       babe_link,
       can_author_with,
@@ -245,13 +248,13 @@ pub fn new_full_base(config: Configuration,
 
     let babe = sc_consensus_babe::start_babe(babe_config)?;
 
-    task_manager.spawn_essential_handle().spawn_blocking("babe-proposer", babe);
+   task_manager.spawn_essential_handle().spawn_blocking("babe-proposer", babe);
   }
 
   // if the node isn't actively participating in consensus then it doesn't
   // need a keystore, regardless of which protocol we use below.
   let keystore = if role.is_authority() {
-    Some(keystore as sp_core::traits::BareCryptoStorePtr)
+    Some(keystore_container.sync_keystore())
   } else {
     None
   };
@@ -277,7 +280,7 @@ pub fn new_full_base(config: Configuration,
       config: grandpa_config,
       link: grandpa_link,
       network: network.clone(),
-      inherent_data_providers: inherent_data_providers.clone(),
+      //inherent_data_providers: inherent_data_providers.clone(),
       telemetry_on_connect: Some(telemetry_connection_sinks.on_connect_stream()),
       voting_rule: sc_finality_grandpa::VotingRulesBuilder::default().build(),
       prometheus_registry,
@@ -290,13 +293,13 @@ pub fn new_full_base(config: Configuration,
       "grandpa-voter",
       sc_finality_grandpa::run_grandpa_voter(grandpa_config)?
     );
-  } else {
-    sc_finality_grandpa::setup_disabled_grandpa(
-      client.clone(),
-      &inherent_data_providers,
-      network.clone(),
-    )?;
-  }
+  } //else {
+    //sc_finality_grandpa::setup_disabled_grandpa(
+    //  client.clone(),
+    //  &inherent_data_providers,
+    //  network.clone(),
+    //)?;
+  //}
 
   network_starter.start_network();
   Ok((task_manager, inherent_data_providers, client, network, transaction_pool))
@@ -315,7 +318,7 @@ pub fn new_light_base(config: Configuration) -> Result<(
   Arc<sc_network::NetworkService<Block, <Block as BlockT>::Hash>>,
   Arc<sc_transaction_pool::LightPool<Block, LightClient, sc_network::config::OnDemand<Block>>>
 ), ServiceError> {
-  let (client, backend, keystore, mut task_manager, on_demand) =
+  let (client, backend, keystore_container, mut task_manager, on_demand) =
     sc_service::new_light_parts::<Block, RuntimeApi, Executor>(&config)?;
 
   let select_chain = sc_consensus::LongestChain::new(backend.clone());
@@ -328,14 +331,14 @@ pub fn new_light_base(config: Configuration) -> Result<(
     on_demand.clone(),
   ));
 
-  let grandpa_block_import = sc_finality_grandpa::light_block_import(
-    client.clone(), backend.clone(), &(client.clone() as Arc<_>),
-    Arc::new(on_demand.checker().clone()),
+  let (grandpa_block_import, _) = sc_finality_grandpa::block_import(
+    client.clone(), &(client.clone() as Arc<_>),
+    select_chain.clone()
   )?;
 
   let finality_proof_import = grandpa_block_import.clone();
-  let finality_proof_request_builder =
-    finality_proof_import.create_finality_proof_request_builder();
+//  let finality_proof_request_builder =
+//    finality_proof_import.create_finality_proof_request_builder();
 
   let (babe_block_import, babe_link) = sc_consensus_babe::block_import(
     sc_consensus_babe::Config::get_or_compute(&*client)?,
@@ -348,7 +351,6 @@ pub fn new_light_base(config: Configuration) -> Result<(
   let import_queue = sc_consensus_babe::import_queue(
     babe_link,
     babe_block_import,
-    None,
     Some(Box::new(finality_proof_import)),
     client.clone(),
     select_chain.clone(),
@@ -370,8 +372,8 @@ pub fn new_light_base(config: Configuration) -> Result<(
       import_queue,
       on_demand: Some(on_demand.clone()),
       block_announce_validator_builder: None,
-      finality_proof_request_builder: Some(finality_proof_request_builder),
-      finality_proof_provider: Some(finality_proof_provider),
+     // finality_proof_request_builder: Some(finality_proof_request_builder),
+      //finality_proof_provider: Some(finality_proof_provider),
     })?;
   network_starter.start_network();
 
@@ -397,7 +399,9 @@ pub fn new_light_base(config: Configuration) -> Result<(
       rpc_extensions_builder: Box::new(sc_service::NoopRpcExtensionBuilder(rpc_extensions)),
       client: client.clone(),
       transaction_pool: transaction_pool.clone(),
-      config, keystore, backend, network_status_sinks, system_rpc_tx,
+      config,
+      keystore:  keystore_container.sync_keystore(),
+      backend, network_status_sinks, system_rpc_tx,
       network: network.clone(),
       telemetry_connection_sinks: sc_service::TelemetryConnectionSinks::default(),
       task_manager: &mut task_manager,

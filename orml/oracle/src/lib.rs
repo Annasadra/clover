@@ -58,8 +58,8 @@ pub struct TimestampedValue<Value, Moment> {
 	pub timestamp: Moment,
 }
 
-pub trait Config<I: Instance = DefaultInstance>: frame_system::Trait {
-	type Event: From<Event<Self, I>> + Into<<Self as frame_system::Trait>::Event>;
+pub trait Config<I: Instance = DefaultInstance>: frame_system::Config {
+	type Event: From<Event<Self, I>> + Into<<Self as frame_system::Config>::Event>;
 
 	/// Hook on new data received
 	type OnNewData: OnNewData<Self::AccountId, Self::OracleKey, Self::OracleValue>;
@@ -95,7 +95,7 @@ decl_error! {
 
 decl_event!(
 	pub enum Event<T, I=DefaultInstance> where
-		<T as frame_system::Trait>::AccountId,
+		<T as frame_system::Config>::AccountId,
 		<T as Config<I>>::OracleKey,
 		<T as Config<I>>::OracleValue,
 	{

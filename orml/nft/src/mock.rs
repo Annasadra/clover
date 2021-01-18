@@ -22,7 +22,7 @@ parameter_types! {
 pub type AccountId = u128;
 pub type BlockNumber = u64;
 
-impl frame_system::Trait for Runtime {
+impl frame_system::Config for Runtime {
 	type Origin = Origin;
 	type Index = u64;
 	type BlockNumber = BlockNumber;

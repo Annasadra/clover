@@ -18,8 +18,8 @@ use sp_std::{convert::TryInto, result};
 // mod mock;
 // mod tests;
 
-pub trait Trait: system::Trait {
-  type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
+pub trait Config: system::Config {
+  type Event: From<Event<Self>> + Into<<Self as system::Config>::Event>;
 
   /// Currency type for deposit/withdraw collateral assets to/from loans
   /// module
@@ -42,7 +42,7 @@ pub struct Position {
 }
 
 decl_storage! {
-  trait Store for Module<T: Trait> as Loans {
+  trait Store for Module<T: Config> as Loans {
     /// The collateralized debit positions, map from
     /// Owner -> CollateralType -> Position
     pub Positions get(fn positions): double_map hasher(twox_64_concat) CurrencyId, hasher(twox_64_concat) T::AccountId => Position;
@@ -55,7 +55,7 @@ decl_storage! {
 
 decl_event!(
   pub enum Event<T> where
-    <T as system::Trait>::AccountId,
+    <T as system::Config>::AccountId,
     Amount = Amount,
     Balance = Balance,
     CurrencyId = CurrencyId,
@@ -71,7 +71,7 @@ decl_event!(
 
 decl_error! {
   /// Error for loans module.
-  pub enum Error for Module<T: Trait> {
+  pub enum Error for Module<T: Config> {
     DebitOverflow,
     DebitTooLow,
     CollateralOverflow,
@@ -81,7 +81,7 @@ decl_error! {
 }
 
 decl_module! {
-  pub struct Module<T: Trait> for enum Call where origin: T::Origin {
+  pub struct Module<T: Config> for enum Call where origin: T::Origin {
     type Error = Error<T>;
     fn deposit_event() = default;
 
@@ -90,7 +90,7 @@ decl_module! {
   }
 }
 
-impl<T: Trait> Module<T> {
+impl<T: Config> Module<T> {
   pub fn account_id() -> T::AccountId {
     T::ModuleId::get().into_account()
   }
@@ -227,7 +227,7 @@ impl<T: Trait> Module<T> {
   }
 }
 
-impl<T: Trait> Module<T> {
+impl<T: Config> Module<T> {
   /// Convert `Balance` to `Amount`.
   fn amount_try_from_balance(b: Balance) -> result::Result<Amount, Error<T>> {
     TryInto::<Amount>::try_into(b).map_err(|_| Error::<T>::AmountConvertFailed)

@@ -1,9 +1,9 @@
 use primitive_types::{H256, U256};
 use evm_core::ExitError;
-use crate::Config;
+use crate::EvmConfig;
 use crate::consts::*;
 
-pub fn call_extra_check(gas: U256, after_gas: usize, config: &Config) -> Result<(), ExitError> {
+pub fn call_extra_check(gas: U256, after_gas: usize, config: &EvmConfig) -> Result<(), ExitError> {
 	if config.err_on_call_with_more_gas && U256::from(after_gas) < gas {
 		Err(ExitError::OutOfGas)
 	} else {
@@ -19,7 +19,7 @@ pub fn suicide_refund(already_removed: bool) -> isize {
 	}
 }
 
-pub fn sstore_refund(original: H256, current: H256, new: H256, config: &Config) -> isize {
+pub fn sstore_refund(original: H256, current: H256, new: H256, config: &EvmConfig) -> isize {
 	if config.sstore_gas_metering {
 		if current == new {
 			0
@@ -72,7 +72,7 @@ pub fn create2_cost(len: U256) -> Result<usize, ExitError> {
 	Ok(gas.as_usize())
 }
 
-pub fn exp_cost(power: U256, config: &Config) -> Result<usize, ExitError> {
+pub fn exp_cost(power: U256, config: &EvmConfig) -> Result<usize, ExitError> {
 	if power == U256::zero() {
 		Ok(G_EXP)
 	} else {
@@ -113,7 +113,7 @@ pub fn verylowcopy_cost(len: U256) -> Result<usize, ExitError> {
 	Ok(gas.as_usize())
 }
 
-pub fn extcodecopy_cost(len: U256, config: &Config) -> Result<usize, ExitError> {
+pub fn extcodecopy_cost(len: U256, config: &EvmConfig) -> Result<usize, ExitError> {
 	let wordd = len / U256::from(32);
 	let wordr = len % U256::from(32);
 
@@ -169,7 +169,7 @@ pub fn sha3_cost(len: U256) -> Result<usize, ExitError> {
 	Ok(gas.as_usize())
 }
 
-pub fn sstore_cost(original: H256, current: H256, new: H256, gas: usize, config: &Config) -> Result<usize, ExitError> {
+pub fn sstore_cost(original: H256, current: H256, new: H256, gas: usize, config: &EvmConfig) -> Result<usize, ExitError> {
 	if config.sstore_gas_metering {
 		if config.sstore_revert_under_stipend {
 			if gas < config.call_stipend {
@@ -199,7 +199,7 @@ pub fn sstore_cost(original: H256, current: H256, new: H256, gas: usize, config:
 	}
 }
 
-pub fn suicide_cost(value: U256, target_exists: bool, config: &Config) -> usize {
+pub fn suicide_cost(value: U256, target_exists: bool, config: &EvmConfig) -> usize {
 	let eip161 = !config.empty_considered_exists;
 	let should_charge_topup = if eip161 {
 		value != U256::zero() && !target_exists
@@ -221,7 +221,7 @@ pub fn call_cost(
 	is_call_or_callcode: bool,
 	is_call_or_staticcall: bool,
 	new_account: bool,
-	config: &Config,
+	config: &EvmConfig,
 ) -> usize {
 	let transfers_value = value != U256::default();
 	config.gas_call +
@@ -244,7 +244,7 @@ fn new_cost(
 	is_call_or_staticcall: bool,
 	new_account: bool,
 	transfers_value: bool,
-	config: &Config,
+	config: &EvmConfig,
 ) -> usize {
 	let eip161 = !config.empty_considered_exists;
 	if is_call_or_staticcall {

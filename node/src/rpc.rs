@@ -12,7 +12,7 @@ use sc_consensus_babe_rpc::BabeRpcHandler;
 use sc_consensus_epochs::SharedEpochChanges;
 use sc_finality_grandpa::{FinalityProofProvider, SharedVoterState, SharedAuthoritySet, GrandpaJustificationStream};
 use sc_finality_grandpa_rpc::GrandpaRpcHandler;
-use sc_keystore::KeyStorePtr;
+use sp_keystore::SyncCryptoStorePtr;
 pub use sc_rpc::SubscriptionTaskExecutor;
 pub use sc_rpc_api::DenyUnsafe;
 use sp_api::ProvideRuntimeApi;
@@ -44,10 +44,10 @@ pub struct BabeDeps {
   /// BABE pending epoch changes.
   pub shared_epoch_changes: SharedEpochChanges<Block, Epoch>,
   /// The keystore that manages the keys of the node.
-  pub keystore: KeyStorePtr,
+  pub keystore: SyncCryptoStorePtr,
 }
 
-/// Extra dependencies for GRANDPA
+///// Extra dependencies for GRANDPA
 pub struct GrandpaDeps<B> {
   /// Voting round info.
   pub shared_voter_state: SharedVoterState,

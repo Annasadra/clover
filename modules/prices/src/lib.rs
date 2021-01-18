@@ -15,8 +15,8 @@ use clover_traits::PriceProvider;
 // mod mock;
 // mod tests;
 
-pub trait Trait: system::Trait {
-  type Event: From<Event> + Into<<Self as system::Trait>::Event>;
+pub trait Config: system::Config {
+  type Event: From<Event> + Into<<Self as system::Config>::Event>;
   type Source: DataProvider<CurrencyId, Price> + DataFeeder<CurrencyId, Price, Self::AccountId>;
   type GetStableCurrencyId: Get<CurrencyId>;
   type StableCurrencyFixedPrice: Get<Price>;
@@ -31,13 +31,13 @@ decl_event!(
 );
 
 decl_storage! {
-  trait Store for Module<T: Trait> as Prices {
+  trait Store for Module<T: Config> as Prices {
     LockedPrice get(fn locked_price): map hasher(twox_64_concat) CurrencyId => Option<Price>;
   }
 }
 
 decl_module! {
-  pub struct Module<T: Trait> for enum Call where origin: T::Origin {
+  pub struct Module<T: Config> for enum Call where origin: T::Origin {
     fn deposit_event() = default;
 
     const GetStableCurrencyId: CurrencyId = T::GetStableCurrencyId::get();
@@ -63,9 +63,9 @@ decl_module! {
   }
 }
 
-impl<T: Trait> Module<T> {}
+impl<T: Config> Module<T> {}
 
-impl<T: Trait> PriceProvider<CurrencyId, Price> for Module<T> {
+impl<T: Config> PriceProvider<CurrencyId, Price> for Module<T> {
   fn get_relative_price(base_currency_id: CurrencyId, quote_currency_id: CurrencyId) -> Option<Price> {
     if let (Some(base_price), Some(quote_price)) =
       (Self::get_price(base_currency_id), Self::get_price(quote_currency_id))

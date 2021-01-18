@@ -3,7 +3,7 @@ use alloc::{rc::Rc, vec, vec::Vec, collections::{BTreeMap, BTreeSet}};
 use primitive_types::{U256, H256, H160};
 use sha3::{Keccak256, Digest};
 use crate::{ExitError, Stack, ExternalOpcode, Opcode, Capture, Handler, Transfer,
-			Context, CreateScheme, Runtime, ExitReason, ExitSucceed, Config};
+			Context, CreateScheme, Runtime, ExitReason, ExitSucceed, EvmConfig};
 use crate::backend::{InternalTransaction, Log, Basic, Apply, Backend};
 use crate::gasometer::{self, Gasometer};
 use frame_support::{debug};
@@ -40,7 +40,7 @@ pub struct StackSubstate<'config> {
 /// Stack-based executor.
 pub struct StackExecutor<'backend, 'config, B> {
 	backend: &'backend B,
-	config: &'config Config,
+	config: &'config EvmConfig,
 	precompile: fn(H160, &[u8], Option<usize>) -> Option<Result<(ExitSucceed, Vec<u8>, usize), ExitError>>,
 	substates: Vec<StackSubstate<'config>>,
 	/// internal calls by current transaction.
@@ -60,7 +60,7 @@ impl<'backend, 'config, B: Backend> StackExecutor<'backend, 'config, B> {
 	pub fn new(
 		backend: &'backend B,
 		gas_limit: usize,
-		config: &'config Config,
+		config: &'config EvmConfig,
 	) -> Self {
 		Self::new_with_precompile(backend, gas_limit, config, no_precompile)
 	}
@@ -69,7 +69,7 @@ impl<'backend, 'config, B: Backend> StackExecutor<'backend, 'config, B> {
 	pub fn new_with_precompile(
 		backend: &'backend B,
 		gas_limit: usize,
-		config: &'config Config,
+		config: &'config EvmConfig,
 		precompile: fn(H160, &[u8], Option<usize>) -> Option<Result<(ExitSucceed, Vec<u8>, usize), ExitError>>,
 	) -> Self {
 		Self {

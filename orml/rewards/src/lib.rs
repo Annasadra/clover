@@ -34,7 +34,7 @@ pub struct PoolInfo<Share: HasCompact, Balance: HasCompact> {
 	pub total_withdrawn_rewards: Balance,
 }
 
-pub trait Config: frame_system::Trait {
+pub trait Config: frame_system::Config {
 	/// The share type of pool.
 	type Share: Parameter
 		+ Member

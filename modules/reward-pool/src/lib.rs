@@ -70,8 +70,8 @@ pub struct PoolAccountInfo <Share: HasCompact, Balance: HasCompact> {
   pub borrowed_amount: Balance, // borrow balances
 }
 
-pub trait Trait: frame_system::Trait {
-  type Event: From<Event<Self>> + Into<<Self as frame_system::Trait>::Event>;
+pub trait Config: frame_system::Config {
+  type Event: From<Event<Self>> + Into<<Self as frame_system::Config>::Event>;
 
   /// The reward pool ID type.
   type PoolId: Parameter + Member + Copy + FullCodec;
@@ -92,8 +92,8 @@ pub trait Trait: frame_system::Trait {
 
 decl_event!(
   pub enum Event<T> where
-    <T as frame_system::Trait>::AccountId,
-    <T as Trait>::PoolId,
+    <T as frame_system::Config>::AccountId,
+    <T as Config>::PoolId,
     Share = Share,
     Balance = Balance,
   {
@@ -104,7 +104,7 @@ decl_event!(
 
 decl_error! {
   /// Error for dex module.
-  pub enum Error for Module<T: Trait> {
+  pub enum Error for Module<T: Config> {
     /// invalid reward caculated
     RewardCaculationError,
     InsufficientShares,
@@ -114,7 +114,7 @@ decl_error! {
 }
 
 decl_storage! {
-  trait Store for Module<T: Trait> as RewardPool {
+  trait Store for Module<T: Config> as RewardPool {
     /// reward pool info.
     pub Pools get(fn get_pool): map hasher(twox_64_concat) T::PoolId => PoolInfo<Share, Balance, T::BlockNumber>;
 
@@ -124,7 +124,7 @@ decl_storage! {
 }
 
 decl_module! {
-  pub struct Module<T: Trait> for enum Call where origin: T::Origin {
+  pub struct Module<T: Config> for enum Call where origin: T::Origin {
     type Error = Error<T>;
     fn deposit_event() = default;
 
@@ -133,7 +133,7 @@ decl_module! {
   }
 }
 
-impl<T: Trait> Module<T> {
+impl<T: Config> Module<T> {
   pub fn sub_account_id(pool_id: T::PoolId) -> T::AccountId {
     T::ModuleId::get().into_sub_account(pool_id)
   }
@@ -299,7 +299,7 @@ impl<T: Trait> Module<T> {
   }
 }
 
-impl<T: Trait> RewardPoolOps<T::AccountId, T::PoolId, Share, Balance> for Module<T> {
+impl<T: Config> RewardPoolOps<T::AccountId, T::PoolId, Share, Balance> for Module<T> {
   /// add shares to the reward pool
   /// note: should call this function insdie a storage transaction
   /// steps:

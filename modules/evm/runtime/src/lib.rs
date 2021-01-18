@@ -81,7 +81,7 @@ pub struct Runtime<'config> {
 	status: Result<(), ExitReason>,
 	return_data_buffer: Vec<u8>,
 	context: Context,
-	_config: &'config Config,
+	_config: &'config EvmConfig,
 }
 
 impl<'config> Runtime<'config> {
@@ -90,7 +90,7 @@ impl<'config> Runtime<'config> {
 		code: Rc<Vec<u8>>,
 		data: Rc<Vec<u8>>,
 		context: Context,
-		config: &'config Config,
+		config: &'config EvmConfig,
 	) -> Self {
 		Self {
 			machine: Machine::new(code, data, config.stack_limit, config.memory_limit),
@@ -127,7 +127,7 @@ impl<'config> Runtime<'config> {
 
 /// Runtime configuration.
 #[derive(Clone, Debug)]
-pub struct Config {
+pub struct EvmConfig {
 	/// Gas paid for extcode.
 	pub gas_ext_code: usize,
 	/// Gas paid for extcodehash.
@@ -202,10 +202,10 @@ pub struct Config {
 	pub estimate: bool,
 }
 
-impl Config {
+impl EvmConfig {
 	/// Frontier hard fork configuration.
-	pub const fn frontier() -> Config {
-		Config {
+	pub const fn frontier() -> EvmConfig {
+		EvmConfig {
 			gas_ext_code: 20,
 			gas_ext_code_hash: 20,
 			gas_balance: 20,
@@ -245,8 +245,8 @@ impl Config {
 	}
 
 	/// Istanbul hard fork configuration.
-	pub const fn istanbul() -> Config {
-		Config {
+	pub const fn istanbul() -> EvmConfig {
+		EvmConfig {
 			gas_ext_code: 700,
 			gas_ext_code_hash: 700,
 			gas_balance: 700,

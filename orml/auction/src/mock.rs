@@ -35,7 +35,7 @@ pub type Balance = u64;
 pub type BlockNumber = u64;
 pub type AuctionId = u64;
 
-impl frame_system::Trait for Runtime {
+impl frame_system::Config for Runtime {
 	type Origin = Origin;
 	type Index = u64;
 	type BlockNumber = BlockNumber;

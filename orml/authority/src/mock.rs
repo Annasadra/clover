@@ -26,7 +26,7 @@ parameter_types! {
 			frame_system::limits::BlockWeights::simple_max(2_000_000_000_000);
 }
 
-impl frame_system::Trait for Runtime {
+impl frame_system::Config for Runtime {
 	type Origin = Origin;
 	type Index = u64;
 	type BlockNumber = BlockNumber;

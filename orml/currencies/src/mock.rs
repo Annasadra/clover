@@ -39,7 +39,7 @@ parameter_types! {
 }
 
 pub type AccountId = AccountId32;
-impl frame_system::Trait for Runtime {
+impl frame_system::Config for Runtime {
 	type Origin = Origin;
 	type Call = ();
 	type Index = u64;

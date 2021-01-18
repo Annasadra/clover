@@ -13,7 +13,7 @@ mod utils;
 use core::cmp::max;
 use primitive_types::{H160, H256, U256};
 use evm_core::{ExternalOpcode, Opcode, ExitError, Stack};
-use evm_runtime::{Handler, Config};
+use evm_runtime::{Handler, EvmConfig};
 
 macro_rules! try_or_fail {
 	( $inner:expr, $e:expr ) => (
@@ -31,13 +31,13 @@ macro_rules! try_or_fail {
 #[derive(Clone)]
 pub struct Gasometer<'config> {
 	gas_limit: usize,
-	config: &'config Config,
+	config: &'config EvmConfig,
 	inner: Result<Inner<'config>, ExitError>
 }
 
 impl<'config> Gasometer<'config> {
 	/// Create a new gasometer with given gas limit and config.
-	pub fn new(gas_limit: usize, config: &'config Config) -> Self {
+	pub fn new(gas_limit: usize, config: &'config EvmConfig) -> Self {
 		Self {
 			gas_limit,
 			config,
@@ -57,7 +57,7 @@ impl<'config> Gasometer<'config> {
 	}
 
 	/// Reference of the config.
-	pub fn config(&self) -> &'config Config {
+	pub fn config(&self) -> &'config EvmConfig {
 		self.config
 	}
 
@@ -224,7 +224,7 @@ pub fn opcode_cost<H: Handler>(
 	opcode: Result<Opcode, ExternalOpcode>,
 	stack: &Stack,
 	is_static: bool,
-	config: &Config,
+	config: &EvmConfig,
 	handler: &H
 ) -> Result<(GasCost, Option<MemoryCost>), ExitError> {
 	let gas_cost = match opcode {
@@ -410,7 +410,7 @@ struct Inner<'config> {
 	memory_cost: usize,
 	used_gas: usize,
 	refunded_gas: isize,
-	config: &'config Config,
+	config: &'config EvmConfig,
 }
 
 impl<'config> Inner<'config> {

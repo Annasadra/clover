@@ -90,7 +90,7 @@ impl<
 }
 
 /// Origin for the authority module.
-pub type Origin<T> = DelayedOrigin<<T as frame_system::Trait>::BlockNumber, <T as Config>::PalletsOrigin>;
+pub type Origin<T> = DelayedOrigin<<T as frame_system::Config>::BlockNumber, <T as Config>::PalletsOrigin>;
 
 /// Config for orml-authority
 pub trait AuthorityConfig<Origin, PalletsOrigin, BlockNumber> {
@@ -129,32 +129,32 @@ type CallOf<T> = <T as Config>::Call;
 pub type ScheduleTaskIndex = u32;
 
 /// orml-authority configuration trait.
-pub trait Config: frame_system::Trait {
+pub trait Config: frame_system::Config {
 	/// The overarching event type.
-	type Event: From<Event<Self>> + Into<<Self as frame_system::Trait>::Event>;
+	type Event: From<Event<Self>> + Into<<Self as frame_system::Config>::Event>;
 
 	/// The outer origin type.
 	type Origin: From<DelayedOrigin<Self::BlockNumber, <Self as Config>::PalletsOrigin>>
-		+ IsType<<Self as frame_system::Trait>::Origin>
+		+ IsType<<Self as frame_system::Config>::Origin>
 		+ OriginTrait<PalletsOrigin = Self::PalletsOrigin>;
 
 	/// The caller origin, overarching type of all pallets origins.
-	type PalletsOrigin: Parameter + Into<<Self as frame_system::Trait>::Origin>;
+	type PalletsOrigin: Parameter + Into<<Self as frame_system::Config>::Origin>;
 
 	/// The aggregated call type.
 	type Call: Parameter
-		+ Dispatchable<Origin = <Self as frame_system::Trait>::Origin, PostInfo = PostDispatchInfo>
+		+ Dispatchable<Origin = <Self as frame_system::Config>::Origin, PostInfo = PostDispatchInfo>
 		+ GetDispatchInfo;
 
 	/// The Scheduler.
 	type Scheduler: ScheduleNamed<Self::BlockNumber, <Self as Config>::Call, Self::PalletsOrigin>;
 
 	/// The type represent origin that can be dispatched by other origins.
-	type AsOriginId: Parameter + AsOriginId<<Self as frame_system::Trait>::Origin, Self::PalletsOrigin>;
+	type AsOriginId: Parameter + AsOriginId<<Self as frame_system::Config>::Origin, Self::PalletsOrigin>;
 
 	/// Additional permission config.
 	type AuthorityConfig: AuthorityConfig<
-		<Self as frame_system::Trait>::Origin,
+		<Self as frame_system::Config>::Origin,
 		Self::PalletsOrigin,
 		Self::BlockNumber,
 	>;
@@ -188,7 +188,7 @@ decl_storage! {
 decl_event! {
 	pub enum Event<T> where
 		<T as Config>::PalletsOrigin,
-		<T as frame_system::Trait>::BlockNumber,
+		<T as frame_system::Config>::BlockNumber,
 	{
 		/// A call is dispatched. [result]
 		Dispatched(DispatchResult),
@@ -204,7 +204,7 @@ decl_event! {
 }
 
 decl_module! {
-	pub struct Module<T: Config> for enum Call where origin: <T as frame_system::Trait>::Origin {
+	pub struct Module<T: Config> for enum Call where origin: <T as frame_system::Config>::Origin {
 		type Error = Error<T>;
 
 		fn deposit_event() = default;

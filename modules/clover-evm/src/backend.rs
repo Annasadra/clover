@@ -68,7 +68,7 @@ impl<'vicinity, T> Backend<'vicinity, T> {
 	}
 }
 
-impl<'vicinity, T: Trait> BackendT for Backend<'vicinity, T> {
+impl<'vicinity, T: Config> BackendT for Backend<'vicinity, T> {
 	fn gas_price(&self) -> U256 { self.vicinity.gas_price }
 	fn origin(&self) -> H160 { self.vicinity.origin }
 
@@ -137,7 +137,7 @@ impl<'vicinity, T: Trait> BackendT for Backend<'vicinity, T> {
 	}
 }
 
-impl<'vicinity, T: Trait> ApplyBackend for Backend<'vicinity, T> {
+impl<'vicinity, T: Config> ApplyBackend for Backend<'vicinity, T> {
 	fn apply<A, I, L>(
 		&mut self,
 		values: A,

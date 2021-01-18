@@ -22,8 +22,8 @@ sp-core = { version = "2.0.0", default-features = false }
 sp-runtime = { version = "2.0.0", default-features = false }
 sp-std = { version = "2.0.0", default-features = false }
 sp-io = { version = "2.0.0", default-features = false }
-primitive-types = { version = "0.7.0", default-features = false, features = ["rlp", "byteorder"] }
-rlp = { version = "0.4", default-features = false }
+primitive-types = { version = "0.8", default-features = false, features = ["rlp", "byteorder"] }
+rlp = { version = "0.5", default-features = false }
 evm = { version = "0.19", default-features = false, features = ["with-codec"], path = "../evm" }
 evm-core = { version = "0.19", default-features = false, features = ["with-codec"], path = "../evm/core" }
 evm-runtime = { version = "0.19", default-features = false, path = "../evm/runtime" }

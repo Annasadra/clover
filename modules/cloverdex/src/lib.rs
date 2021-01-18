@@ -45,8 +45,8 @@ mod simple_graph;
 mod mock;
 mod tests;
 
-pub trait Trait: system::Trait {
-  type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
+pub trait Config: system::Config {
+  type Event: From<Event<Self>> + Into<<Self as system::Config>::Event>;
 
   /// Associate type for measuring liquidity contribution of specific trading
   /// pairs
@@ -81,8 +81,8 @@ pub enum RouteType {
 
 decl_event!(
   pub enum Event<T> where
-    <T as system::Trait>::AccountId,
-    <T as Trait>::Share,
+    <T as system::Config>::AccountId,
+    <T as Config>::Share,
     Balance = Balance,
     CurrencyId = CurrencyId,
   {
@@ -108,7 +108,7 @@ decl_event!(
 
 decl_error! {
   /// Error for dex module.
-  pub enum Error for Module<T: Trait> {
+  pub enum Error for Module<T: Config> {
     /// Currency Pair not exists
     InvalidCurrencyPair,
     /// Not the tradable currency type
@@ -129,7 +129,7 @@ decl_error! {
 }
 
 decl_storage! {
-  trait Store for Module<T: Trait> as CloverDex {
+  trait Store for Module<T: Config> as CloverDex {
     /// Liquidity pool, which is the trading pair for specific currency type to base currency type.
     /// CurrencyType -> (OtherCurrencyAmount, BaseCurrencyAmount)
     LiquidityPool get(fn liquidity_pool): map hasher(blake2_128_concat) PairKey => (Balance, Balance);
@@ -190,7 +190,7 @@ impl<T> ClassifyDispatch<T> for SwapCurrencyUsingRoute {
 }
 
 decl_module! {
-  pub struct Module<T: Trait> for enum Call where origin: T::Origin {
+  pub struct Module<T: Config> for enum Call where origin: T::Origin {
     type Error = Error<T>;
 
     fn deposit_event() = default;
@@ -456,7 +456,7 @@ decl_module! {
   }
 }
 
-impl<T: Trait> Module<T> {
+impl<T: Config> Module<T> {
   pub fn get_exchange_fee() -> Rate {
     if ExchangeFee::exists() {
       Self::exchange_fee()
@@ -470,7 +470,7 @@ impl<T: Trait> Module<T> {
     currency_id_second: CurrencyId,
     max_first_currency_amount: Balance,
     max_second_currency_amount: Balance,
-  ) -> (<T as Trait>::Share, <T as Trait>::Share) {
+  ) -> (<T as Config>::Share, <T as Config>::Share) {
     let pair_id = Self::get_pair_key(&currency_id_first, &currency_id_second);
     //
     // normalize currency pair, smaller at the left side

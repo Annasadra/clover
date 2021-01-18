@@ -813,7 +813,7 @@ macro_rules! impl_benchmark {
 				let mut whitelist = whitelist.to_vec();
 				let whitelisted_caller_key =
 					<frame_system::Account::<$runtime> as frame_support::storage::StorageMap<_,_>>::hashed_key_for(
-						$crate::whitelisted_caller::<<$runtime as frame_system::Trait>::AccountId>()
+						$crate::whitelisted_caller::<<$runtime as frame_system::Config>::AccountId>()
 					);
 				whitelist.push(whitelisted_caller_key.into());
 				$crate::benchmarking::set_whitelist(whitelist);

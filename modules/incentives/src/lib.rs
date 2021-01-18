@@ -47,12 +47,12 @@ pub enum PoolId {
   Dex(PairKey),
 }
 
-pub trait Trait: frame_system::Trait {
+pub trait Config: frame_system::Config {
   type RewardPool:  RewardPoolOps<Self::AccountId, PoolId, Share, Balance>;
 }
 
 decl_storage! {
-  trait Store for Module<T: Trait> as Incentives {
+  trait Store for Module<T: Config> as Incentives {
     // mapping from pool id to its incentive reward per block
     pub DexIncentiveRewards get(fn dex_incentive_rewards): map hasher(twox_64_concat) PoolId => Balance;
   }
@@ -73,14 +73,14 @@ decl_storage! {
 
 decl_error! {
   /// Error for incentive module.
-  pub enum Error for Module<T: Trait> {
+  pub enum Error for Module<T: Config> {
     /// invalid currency pair
     InvalidCurrencyPair,
   }
 }
 
 decl_module! {
-  pub struct Module<T: Trait> for enum Call where origin: T::Origin {
+  pub struct Module<T: Config> for enum Call where origin: T::Origin {
     type Error = Error<T>;
   }
 }
@@ -88,7 +88,7 @@ decl_module! {
 //
 // we don't support auto staking for lp tokens
 // pub struct OnAddLiquidity<T>(sp_std::marker::PhantomData<T>);
-// impl<T: Trait> Happened<(T::AccountId, CurrencyId, CurrencyId, Share)> for OnAddLiquidity<T> {
+// impl<T: Config> Happened<(T::AccountId, CurrencyId, CurrencyId, Share)> for OnAddLiquidity<T> {
 // 	fn happened(info: &(T::AccountId, CurrencyId, CurrencyId, Share)) {
 // 		let (who, currency_first, currency_second, increase_share) = info;
 //     if currency_first == currency_second {
@@ -108,7 +108,7 @@ decl_module! {
 //
 //
 // pub struct OnRemoveLiquidity<T>(sp_std::marker::PhantomData<T>);
-// impl<T: Trait> Happened<(T::AccountId, CurrencyId, CurrencyId, Share)> for OnRemoveLiquidity<T> {
+// impl<T: Config> Happened<(T::AccountId, CurrencyId, CurrencyId, Share)> for OnRemoveLiquidity<T> {
 // 	fn happened(info: &(T::AccountId, CurrencyId, CurrencyId, Share)) {
 // 		let (who, currency_first, currency_second, decrease_share) = info;
 //     if currency_first == currency_second {
@@ -126,7 +126,7 @@ decl_module! {
 // }
 
 
-impl <T: Trait> Module<T> {
+impl <T: Config> Module<T> {
   fn get_dex_id(first: &CurrencyId, second: &CurrencyId) -> Result<PoolId, DispatchError> {
     let pair_key = PairKey::try_from(*first, *second)
       .ok_or(Error::<T>::InvalidCurrencyPair)?;
@@ -134,7 +134,7 @@ impl <T: Trait> Module<T> {
   }
 }
 
-impl <T: Trait> RewardHandler<T::AccountId, T::BlockNumber, Balance, Share, PoolId> for Module<T>
+impl <T: Config> RewardHandler<T::AccountId, T::BlockNumber, Balance, Share, PoolId> for Module<T>
 where T::BlockNumber: SaturatedConversion, {
   fn caculate_reward(pool_id: &PoolId,
                      total_share: &Share,
@@ -157,7 +157,7 @@ where T::BlockNumber: SaturatedConversion, {
   }
 }
 
-impl<T: Trait> IncentiveOps<T::AccountId, CurrencyId, Share, Balance> for Module<T> {
+impl<T: Config> IncentiveOps<T::AccountId, CurrencyId, Share, Balance> for Module<T> {
 
   fn add_share(who: &T::AccountId,
                currency_first: &CurrencyId,

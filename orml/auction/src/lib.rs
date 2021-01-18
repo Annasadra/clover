@@ -34,8 +34,8 @@ pub trait WeightInfo {
 	fn on_finalize(c: u32) -> Weight;
 }
 
-pub trait Config: frame_system::Trait {
-	type Event: From<Event<Self>> + Into<<Self as frame_system::Trait>::Event>;
+pub trait Config: frame_system::Config {
+	type Event: From<Event<Self>> + Into<<Self as frame_system::Config>::Event>;
 
 	/// The balance type for bidding
 	type Balance: Parameter + Member + AtLeast32BitUnsigned + Default + Copy + MaybeSerializeDeserialize;
@@ -53,7 +53,7 @@ pub trait Config: frame_system::Trait {
 
 decl_event!(
 	pub enum Event<T> where
-		<T as frame_system::Trait>::AccountId,
+		<T as frame_system::Config>::AccountId,
 		<T as Config>::Balance,
 		<T as Config>::AuctionId,
 	{

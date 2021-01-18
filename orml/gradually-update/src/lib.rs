@@ -56,8 +56,8 @@ pub struct GraduallyUpdate {
 	pub per_block: StorageValue,
 }
 
-pub trait Config: frame_system::Trait {
-	type Event: From<Event<Self>> + Into<<Self as frame_system::Trait>::Event>;
+pub trait Config: frame_system::Config {
+	type Event: From<Event<Self>> + Into<<Self as frame_system::Config>::Event>;
 	/// The frequency of updating values between blocks
 	type UpdateFrequency: Get<Self::BlockNumber>;
 	/// The origin that can schedule an update
@@ -78,7 +78,7 @@ decl_storage! {
 decl_event!(
 	/// Event for gradually-update module.
 	pub enum Event<T> where
-	<T as frame_system::Trait>::BlockNumber,
+	<T as frame_system::Config>::BlockNumber,
 	{
 		/// Gradually update added. [key, per_block, target_value]
 		GraduallyUpdateAdded(StorageKey, StorageValue, StorageValue),

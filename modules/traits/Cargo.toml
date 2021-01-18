@@ -22,30 +22,14 @@ frame-support = { version = "2.0.0", default-features = false }
 frame-system = { version = "2.0.0", default-features = false }
 sp-std = { version = "2.0.0", default-features = false }
 pallet-balances = { version = "2.0.0", default-features = false }
+orml-currencies = { path = "../../orml/currencies", default-features = false }
+orml-tokens = { path = "../../orml/tokens", default-features = false }
+orml-traits = { path = "../../orml/traits", default-features = false }
+orml-utilities = { path = "../../orml/utilities", default-features = false }
 
 [dev-dependencies]
 sp-core = { version = "2.0.0", default-features = false }
 sp-io = { version = "2.0.0", default-features = false }
-
-[dependencies.orml-currencies]
-default-features = false
-git = 'https://github.com/open-web3-stack/open-runtime-module-library.git'
-rev = '616e6858ec'
-
-[dependencies.orml-tokens]
-default-features = false
-git = 'https://github.com/open-web3-stack/open-runtime-module-library.git'
-rev = '616e6858ec'
-
-[dependencies.orml-traits]
-default-features = false
-git = 'https://github.com/open-web3-stack/open-runtime-module-library.git'
-rev = '616e6858ec'
-
-[dependencies.orml-utilities]
-default-features = false
-git = 'https://github.com/open-web3-stack/open-runtime-module-library.git'
-rev = '616e6858ec'
 
 [dependencies.primitives]
   default-features = false

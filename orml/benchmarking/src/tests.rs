@@ -41,7 +41,7 @@ impl_outer_origin! {
 	pub enum Origin for Test {}
 }
 
-pub trait Config: frame_system::Trait {
+pub trait Config: frame_system::Config {
 	type Event;
 	type BlockNumber;
 }
@@ -51,7 +51,7 @@ type AccountId = u128;
 #[derive(Clone, Eq, PartialEq)]
 pub struct Test;
 
-impl frame_system::Trait for Test {
+impl frame_system::Config for Test {
 	type Origin = Origin;
 	type Index = u64;
 	type BlockNumber = u64;

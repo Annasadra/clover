@@ -14,6 +14,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+#![allow(clippy::borrowed_box)]
 
 use crate::chain_spec;
 use crate::cli::{Cli, Subcommand};
@@ -68,7 +69,7 @@ pub fn run() -> sc_cli::Result<()> {
   let cli = Cli::from_args();
 
   match &cli.subcommand {
-    Some(Subcommand::Key(cmd)) => cmd.run(),
+    Some(Subcommand::Key(cmd)) => cmd.run(&cli),
     Some(Subcommand::Sign(cmd)) => cmd.run(),
     Some(Subcommand::Verify(cmd)) => cmd.run(),
     Some(Subcommand::Vanity(cmd)) => cmd.run(),
@@ -127,10 +128,13 @@ pub fn run() -> sc_cli::Result<()> {
     }
     None => {
       let runner = cli.create_runner(&cli.run)?;
-      runner.run_node_until_exit(|config| match config.role {
+      runner.run_node_until_exit(|config| async move {
+        match config.role {
         Role::Light => service::new_light(config),
         _ => service::new_full(config),
+        }
       })
+      .map_err(Into::into)
     }
   }
 }

@@ -49,7 +49,7 @@ parameter_types! {
   pub const AvailableBlockRatio: Perbill = Perbill::one();
 }
 
-impl frame_system::Trait for TestRuntime {
+impl frame_system::Config for TestRuntime {
   type Origin = Origin;
   type Index = u64;
   type BlockNumber = BlockNumber;
@@ -84,7 +84,7 @@ parameter_types! {
   pub const MaxLocks: u32 = 50;
 }
 
-impl pallet_balances::Trait for TestRuntime {
+impl pallet_balances::Config for TestRuntime {
   /// The type for recording an account's balance.
   type Balance = Balance;
   /// The ubiquitous event type.
