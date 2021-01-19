@@ -1,7 +1,6 @@
 // Copyright (C) 2021 Clover Finance.
 // This file is part of Clover.
 
-use sp_runtime::traits::{Convert, SaturatedConversion};
 use frame_support::traits::{OnUnbalanced, Imbalance, Currency};
 use crate::NegativeImbalance;
 

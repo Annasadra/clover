@@ -16,7 +16,7 @@ members = [
 
 [patch.crates-io]
 frame-benchmarking = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
-frame-benchmarking-cli = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
+# frame-benchmarking-cli = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
 frame-executive = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
 frame-support = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
 frame-system = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
@@ -36,11 +36,11 @@ pallet-grandpa = { git = "https://github.com/paritytech/substrate.git",  branch 
 pallet-im-online = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
 pallet-indices = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
 pallet-membership = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
-pallet-multisig = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
+# pallet-multisig = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
 pallet-offences = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
-pallet-proxy = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
+# pallet-proxy = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
 pallet-randomness-collective-flip = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
-pallet-recovery = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
+# pallet-recovery = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
 pallet-scheduler = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
 pallet-session = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
 pallet-staking = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
@@ -62,7 +62,7 @@ sc-consensus = { git = "https://github.com/paritytech/substrate.git",  branch = 
 sc-consensus-babe = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
 sc-consensus-babe-rpc = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
 sc-consensus-slots = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
-sc-consensus-manual-seal = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
+# sc-consensus-manual-seal = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
 sc-consensus-epochs = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
 sc-executor = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }
 sc-finality-grandpa = { git = "https://github.com/paritytech/substrate.git",  branch = "rococo-v1"  }

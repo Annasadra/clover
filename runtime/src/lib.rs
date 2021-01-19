@@ -21,7 +21,7 @@ use sp_runtime::{
 };
 pub use sp_runtime::{Perbill, Percent, Permill, Perquintill};
 use sp_runtime::traits::{
-  BlakeTwo256, Block as BlockT, Convert, NumberFor, OpaqueKeys, SaturatedConversion, Saturating,
+  BlakeTwo256, Block as BlockT, Convert, NumberFor, OpaqueKeys, SaturatedConversion,
   StaticLookup,
 };
 use sp_runtime::curve::PiecewiseLinear;
@@ -141,7 +141,6 @@ pub fn native_version() -> NativeVersion {
 }
 
 pub const MAXIMUM_BLOCK_WEIGHT: Weight = 2 * WEIGHT_PER_SECOND;
-pub const MaximumBlockWeight: Weight = 2 * WEIGHT_PER_SECOND;
 pub const NORMAL_DISPATCH_RATIO: Perbill = Perbill::from_percent(75);
 pub const AVERAGE_ON_INITIALIZE_RATIO: Perbill = Perbill::from_perthousand(25);
 
@@ -397,9 +396,6 @@ impl fp_rpc::ConvertTransaction<OpaqueExtrinsic> for TransactionConverter {
 pub struct CurrencyToVoteHandler;
 
 impl CurrencyToVoteHandler {
-  fn factor() -> Balance {
-    (Balances::total_issuance() / u64::max_value() as Balance).max(1)
-  }
 }
 
 impl Convert<u64, u64> for CurrencyToVoteHandler {
@@ -524,7 +520,7 @@ impl pallet_im_online::Config for Runtime {
 }
 
 parameter_types! {
-	pub OffencesWeightSoftLimit: Weight = Perbill::from_percent(60) * MaximumBlockWeight;
+	pub OffencesWeightSoftLimit: Weight = Perbill::from_percent(60) * MAXIMUM_BLOCK_WEIGHT;
 }
 
 impl pallet_offences::Config for Runtime {
@@ -535,7 +531,7 @@ impl pallet_offences::Config for Runtime {
 }
 
 parameter_types! {
-  pub MaximumSchedulerWeight: Weight = Perbill::from_percent(10) * MaximumBlockWeight;
+  pub MaximumSchedulerWeight: Weight = Perbill::from_percent(10) * MAXIMUM_BLOCK_WEIGHT;
   pub const MaxScheduledPerBlock: u32 = 50;
 }
 

@@ -47,7 +47,7 @@ pub struct BabeDeps {
   pub keystore: SyncCryptoStorePtr,
 }
 
-///// Extra dependencies for GRANDPA
+/// Extra dependencies for GRANDPA
 pub struct GrandpaDeps<B> {
   /// Voting round info.
   pub shared_voter_state: SharedVoterState,

@@ -360,8 +360,8 @@ pub fn new_light_base(config: Configuration) -> Result<(
     sp_consensus::NeverCanAuthor,
   )?;
 
-  let finality_proof_provider =
-    GrandpaFinalityProofProvider::new_for_service(backend.clone(), client.clone());
+  //let finality_proof_provider =
+  //  GrandpaFinalityProofProvider::new_for_service(backend.clone(), client.clone());
 
   let (network, network_status_sinks, system_rpc_tx, network_starter) =
     sc_service::build_network(sc_service::BuildNetworkParams {
