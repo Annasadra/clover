@@ -72,11 +72,22 @@ pallet-scheduler = {default-features = false, version = '2.0.0' }
 pallet-utility = {default-features = false, version = '2.0.0' }
 frame-benchmarking = {default-features = false, version = '2.0.0' }
 
+cumulus-runtime = { git = "https://github.com/paritytech/cumulus", branch = "rococo-v1", default-features = false }
+cumulus-parachain-upgrade = { git = "https://github.com/paritytech/cumulus", branch = "rococo-v1", default-features = false }
+cumulus-primitives = { git = "https://github.com/paritytech/cumulus", branch = "rococo-v1", default-features = false }
+cumulus-message-broker = { git = "https://github.com/paritytech/cumulus", branch = "rococo-v1", default-features = false }
+parachain-info = { git = "https://github.com/paritytech/cumulus", branch = "rococo-v1", default-features = false }
+polkadot-parachain = { git = "https://github.com/paritytech/polkadot", branch = "rococo-v1", default-features = false }
+
+xcm = { git = "https://github.com/paritytech/polkadot", branch = "rococo-v1", default-features = false }
+xcm-handler = { git = 'https://github.com/paritytech/cumulus.git', branch = "rococo-v1", default-features = false }
+xcm-builder = { git = "https://github.com/paritytech/polkadot", branch = "rococo-v1", default-features = false }
+xcm-executor = { git = "https://github.com/paritytech/polkadot", branch = "rococo-v1", default-features = false }
+
 orml-currencies = { default-features = false, path = "../orml/currencies" }
 orml-tokens = {default-features = false, path = "../orml/tokens" }
 orml-traits = {default-features = false, path = "../orml/traits" }
 orml-oracle = {default-features = false, path = "../orml/oracle" }
-
 
 [features]
 default = ['std']
@@ -84,6 +95,11 @@ std = [
     'clover-rpc-runtime-api/std',
     'cloverdex/std',
     'codec/std',
+    'cumulus-runtime/std',
+	'cumulus-parachain-upgrade/std',
+	'cumulus-primitives/std',
+	'cumulus-message-broker/std',
+	'parachain-info/std',
     "frame-benchmarking/std",
     'frame-executive/std',
     'frame-support/std',
@@ -136,8 +152,12 @@ std = [
     "fp-rpc/std",
     "evm-accounts/std",
     "evm-bridge/std",
+    "xcm/std",
+	"xcm-builder/std",
+	"xcm-executor/std",
+	"xcm-handler/std",
 ]
 
-[build-dependencies.wasm-builder-runner]
-package = 'substrate-wasm-builder-runner'
-version = '1.0.5'
+
+[build-dependencies]
+substrate-wasm-builder = "3.0.0"
