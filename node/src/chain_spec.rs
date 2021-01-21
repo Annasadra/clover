@@ -105,7 +105,7 @@ fn get_endowed_evm_accounts(endowed_account: Vec<H160>) -> BTreeMap<H160, Genesi
       account,
       GenesisAccount {
         nonce: U256::from(0),
-        balance: U256::from(10_000_000_000_000 * DOLLARS),
+        balance: U256::from(10_000_000 * DOLLARS),
         storage: Default::default(),
         code: vec![],
       },
@@ -143,11 +143,11 @@ pub fn development_config(id: ParaId) -> Result<ChainSpec, String> {
     // Telemetry
     None,
     // Protocol ID
-    Some("cloverlocal"),
+    None,
     // Properties
     Some(json!({
-      "tokenDecimals": 12,
-      "tokenSymbol": "CLV"
+      "tokenDecimals": 18,
+      "tokenSymbol": "RCLV"
     }).as_object().expect("Created an object").clone()),
     // Extensions
     Extensions {
@@ -194,11 +194,11 @@ pub fn local_testnet_config(id: ParaId) -> Result<ChainSpec, String> {
     // Telemetry
     None,
     // Protocol ID
-    Some("cloverlocal"),
+    None,
     // Properties
     Some(json!({
-      "tokenDecimals": 12,
-      "tokenSymbol": "CLV"
+      "tokenDecimals": 18,
+      "tokenSymbol": "RCLV"
     }).as_object().expect("Created an object").clone()),
     // Extensions
     Extensions {
@@ -238,7 +238,7 @@ pub fn local_rose_testnet_config(id: ParaId) -> Result<ChainSpec, String> {
     None,
     // Properties
     Some(json!({
-      "tokenDecimals": 12,
+      "tokenDecimals": 18,
       "tokenSymbol": "RCLV"
     }).as_object().expect("Created an object").clone()),
     // Extensions
