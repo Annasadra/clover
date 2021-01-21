@@ -54,15 +54,11 @@ pub fn create_full<C, P, B, A>(
   C::Api: clover_rpc::incentive_pool::IncentivePoolRuntimeApi<Block, AccountId, CurrencyId, Share, Balance>,
   C::Api: clover_rpc::exchange::CurrencyExchangeRuntimeApi<Block, AccountId, CurrencyId, Balance, Rate, Share>,
   C::Api: fp_rpc::EthereumRuntimeRPCApi<Block>,
-  //C::Api: BabeApi<Block>,
   C::Api: BlockBuilder<Block>,
   P: TransactionPool<Block=Block> + 'static,
   B: Backend<Block> + 'static,
   B::State: StateBackend<BlakeTwo256>,
   A: ChainApi<Block = Block> + 'static,
-  //SC: SelectChain<Block> +'static,
-  //B: sc_client_api::Backend<Block> + Send + Sync + 'static,
-  //B::State: sc_client_api::StateBackend<sp_runtime::traits::HashFor<Block>>,
 {
   use fc_rpc::{
     EthApi, EthApiServer, NetApi, NetApiServer, EthPubSubApi, EthPubSubApiServer,
@@ -77,29 +73,11 @@ pub fn create_full<C, P, B, A>(
     client,
     pool,
     graph: _,
- //   select_chain,
     deny_unsafe,
-//    babe,
-//    grandpa,
     is_authority,
     network,
-    // pending_transactions,
-    // command_sink: None,
   } = deps;
 
-//  let BabeDeps {
-//    keystore,
-//    babe_config,
-//    shared_epoch_changes,
-//  } = babe;
-//  let GrandpaDeps {
-//    shared_voter_state,
-//    shared_authority_set,
-//    justification_stream,
-//    subscription_executor,
-//    finality_provider,
-//  } = grandpa;
-//
   io.extend_with(
     SystemApi::to_delegate(FullSystem::new(client.clone(), pool.clone(), deny_unsafe))
   );
@@ -107,29 +85,6 @@ pub fn create_full<C, P, B, A>(
     TransactionPaymentApi::to_delegate(TransactionPayment::new(client.clone()))
   );
   io.extend_with(ContractsApi::to_delegate(Contracts::new(client.clone())));
-//  io.extend_with(
-//    sc_consensus_babe_rpc::BabeApi::to_delegate(
-//      BabeRpcHandler::new(
-//        client.clone(),
-//        shared_epoch_changes,
-//        keystore,
-//        babe_config,
-//        select_chain,
-//        deny_unsafe,
-//      ),
-//    )
-//  );
- // io.extend_with(
- //   sc_finality_grandpa_rpc::GrandpaApi::to_delegate(
- //     GrandpaRpcHandler::new(
- //       shared_authority_set,
- //       shared_voter_state,
- //       justification_stream,
- //       subscription_executor,
- //       finality_provider,
- //     )
- //   )
- // );
 
   io.extend_with(clover_rpc::balance::CurrencyBalanceRpc::to_delegate(
     clover_rpc::balance::CurrencyBalance::new(client.clone()),

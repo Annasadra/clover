@@ -66,17 +66,6 @@ pub fn get_account_id_from_seed<TPublic: Public>(seed: &str) -> AccountId where
   AccountPublic::from(get_from_seed::<TPublic>(seed)).into_account()
 }
 
-// /// Generate an Babe authority key.
-// pub fn authority_keys_from_seed(s: &str) -> (AccountId, AccountId, BabeId, GrandpaId, ImOnlineId) {
-//   (
-//     get_account_id_from_seed::<sr25519::Public>(&format!("{}//stash", s)),
-//     get_account_id_from_seed::<sr25519::Public>(s),
-//     get_from_seed::<BabeId>(s),
-//     get_from_seed::<GrandpaId>(s),
-//     get_from_seed::<ImOnlineId>(s),
-//   )
-// }
-
 fn endowed_evm_account() -> BTreeMap<H160, GenesisAccount>{
   let endowed_account = vec![
     H160::from_str("6be02d1d3665660d22ff9624b7be0551ee1ac91b").unwrap(),
@@ -288,32 +277,6 @@ fn testnet_genesis(
     pallet_indices: Some(IndicesConfig {
       indices: vec![],
     }),
-//    pallet_session: Some(SessionConfig {
-//      keys: initial_authorities.iter().map(|x| {
-//        (x.0.clone(), x.0.clone(), session_keys(
-//          x.3.clone(),
-//          x.2.clone(),
-//          x.4.clone(),
-//        ))
-//      }).collect::<Vec<_>>(),
-//    }),
-//    pallet_staking: Some(StakingConfig {
-//      validator_count: initial_authorities.len() as u32 * 2,
-//      minimum_validator_count: initial_authorities.len() as u32,
-//      stakers: initial_authorities.iter().map(|x| {
-//        (x.0.clone(), x.1.clone(), STASH, StakerStatus::Validator)
-//      }).collect(),
-//      invulnerables: initial_authorities.iter().map(|x| x.0.clone()).collect(),
-//      slash_reward_fraction: Perbill::from_percent(10),
-//      .. Default::default()
-//    }),
-//    pallet_babe: Some(BabeConfig {
-//      authorities: vec![],
-//    }),
-//    pallet_grandpa: Some(GrandpaConfig {
-//      authorities: vec![],
-//    }),
-//    pallet_im_online: Some(Default::default()),
     pallet_sudo: Some(SudoConfig {
       // Assign network admin rights.
       key: root_key,
