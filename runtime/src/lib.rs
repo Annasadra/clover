@@ -120,7 +120,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
   spec_name: create_runtime_str!("clover-rococo"),
   impl_name: create_runtime_str!("clover-rococo"),
   authoring_version: 1,
-  spec_version: 2,
+  spec_version: 3,
   impl_version: 1,
   apis: RUNTIME_API_VERSIONS,
   transaction_version: 1,
@@ -181,7 +181,7 @@ parameter_types! {
 
   pub const AvailableBlockRatio: Perbill = Perbill::from_percent(75);
   pub const Version: RuntimeVersion = VERSION;
-  pub const SS58Prefix: u8 = 229; // Ss58AddressFormat::CloverAccount
+  pub const SS58Prefix: u8 = 42; // TODO: register it to Ss58AddressFormat::CloverAccount?
 }
 
 // Configure FRAME pallets to include in runtime.
@@ -1194,7 +1194,8 @@ construct_runtime!(
 );
 
 /// The address format for describing accounts.
-pub type Address = <Indices as StaticLookup>::Source;
+pub type Address = sp_runtime::MultiAddress<AccountId, AccountIndex>;
+
 /// Block header type as expected by this runtime.
 pub type Header = generic::Header<BlockNumber, BlakeTwo256>;
 /// Block type as expected by this runtime.
