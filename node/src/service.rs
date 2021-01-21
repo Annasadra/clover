@@ -27,6 +27,18 @@ native_executor_instance!(
   clover_runtime::native_version,
 );
 
+/// Build the inherent data providers timestamp for the node.
+pub fn build_inherent_data_providers() -> Result<sp_inherents::InherentDataProviders, sc_service::Error> {
+	let providers = sp_inherents::InherentDataProviders::new();
+
+	providers
+		.register_provider(sp_timestamp::InherentDataProvider)
+		.map_err(Into::into)
+		.map_err(sp_consensus::error::Error::InherentData)?;
+
+	Ok(providers)
+}
+
 type FullClient = sc_service::TFullClient<Block, RuntimeApi, Executor>;
 type FullBackend = sc_service::TFullBackend<Block>;
 
@@ -38,7 +50,7 @@ pub fn new_partial(config: &Configuration) -> Result<sc_service::PartialComponen
 		sc_transaction_pool::FullPool<Block, FullClient>,
 		FrontierBlockImport<Block, Arc<FullClient>, FullClient>,
 >, ServiceError> {
-  let inherent_data_providers = sp_inherents::InherentDataProviders::new();
+  let inherent_data_providers = build_inherent_data_providers()?;
 
   let (client, backend, keystore_container, task_manager) =
     sc_service::new_full_parts::<Block, RuntimeApi, Executor>(&config)?;

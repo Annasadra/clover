@@ -46,7 +46,9 @@ fn load_spec(
 ) -> std::result::Result<Box<dyn sc_service::ChainSpec>, String> {
   match id {
     "dev" => Ok(Box::new(chain_spec::development_config(para_id)?)),
-    "" | "local" => Ok(Box::new(chain_spec::local_testnet_config(para_id)?)),
+    "" | "local" => {
+      Ok(Box::new(chain_spec::local_testnet_config(para_id)?))
+    },
     "rose" => Ok(Box::new(chain_spec::local_rose_testnet_config(para_id)?)),
     path => Ok(Box::new(chain_spec::ChainSpec::from_json_file(
       path.into(),

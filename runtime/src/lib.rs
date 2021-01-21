@@ -117,8 +117,8 @@ impl_opaque_keys! {
 }
 
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-  spec_name: create_runtime_str!("clover"),
-  impl_name: create_runtime_str!("clover"),
+  spec_name: create_runtime_str!("clover-rococo"),
+  impl_name: create_runtime_str!("clover-rococo"),
   authoring_version: 1,
   spec_version: 2,
   impl_version: 1,
@@ -1589,3 +1589,5 @@ impl_runtime_apis! {
     }
   }
 }
+
+cumulus_runtime::register_validate_block!(Block, Executive);
