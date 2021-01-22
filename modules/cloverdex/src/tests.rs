@@ -265,7 +265,7 @@ fn test_supply_target_calculation() {
   let fee_rate = Rate::checked_from_rational(3, 1000).unwrap();
   let target_amount = BDM::calculate_swap_target_amount(left_balance, right_balance, supply_amount, fee_rate);
   let new_supply_amount = BDM::calculate_swap_supply_amount(left_balance, right_balance, target_amount, fee_rate);
-  assert_eq!(new_supply_amount, supply_amount + 1);
+  assert_eq!(new_supply_amount, supply_amount + 201);
 }
 
 #[test]

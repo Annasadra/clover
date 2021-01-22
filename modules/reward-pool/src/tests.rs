@@ -102,10 +102,10 @@ fn test_reward_single_account_existential() {
     run_to_block(11);
     assert!(RPM::remove_share(&alice, pool_id, 1).is_ok());
     // 1 share's reward is 1, which is too small to send
-    check_pool_data(&pool_id, &alice, 999_999_999_999, 1 * DOLLARS, 1 * DOLLARS, 999_999_999_999, 0);
+    check_pool_data(&pool_id, &alice, 999_999_999_999, 999_999_999_999_000_000, 999_999_999_999_000_000, 999_999_999_999, 0);
 
-    assert_eq!(Currencies::total_balance(CurrencyId::CLV, &alice), initial_balance);
-    assert_eq!(Currencies::total_balance(CurrencyId::CLV, &pool_account), 1 * DOLLARS);
+    assert_eq!(Currencies::total_balance(CurrencyId::CLV, &alice), 1_000_000_000_001_000_000);
+    assert_eq!(Currencies::total_balance(CurrencyId::CLV, &pool_account), 999_999_999_999_000_000);
 
     run_to_block(20);
     assert!(RPM::remove_share(&alice, pool_id, 999_999_999_999).is_ok());
@@ -162,8 +162,8 @@ fn test_multi_account_rewards() {
     assert_eq!(Currencies::total_balance(CurrencyId::CLV, &pool_account), 0);
     assert_eq!(Currencies::total_balance(CurrencyId::CLV, &alice), initial_alice + 150 * DOLLARS);
     // rounding issue
-    assert_eq!(Currencies::total_balance(CurrencyId::CLV, &bob), initial_bob + 175 * DOLLARS + 1);
-    assert_eq!(Currencies::total_balance(CurrencyId::CLV, &dave), initial_dave + 75 * DOLLARS - 1);
+    assert_eq!(Currencies::total_balance(CurrencyId::CLV, &bob), initial_bob + 175 * DOLLARS + 1 + 199);
+    assert_eq!(Currencies::total_balance(CurrencyId::CLV, &dave), initial_dave + 75 * DOLLARS - 200);
   });
 }
 

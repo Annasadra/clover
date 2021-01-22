@@ -120,8 +120,8 @@ pub enum ExitError {
 	/// Create init code exceeds limit (runtime).
 	CreateContractLimit,
 
-	///	An opcode accesses external information, but the request is off offset
-	///	limit (runtime).
+	///    An opcode accesses external information, but the request is off offset
+	///    limit (runtime).
 	OutOfOffset,
 	/// Execution runs out of gas (runtime).
 	OutOfGas,

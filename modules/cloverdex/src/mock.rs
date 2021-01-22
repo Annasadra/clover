@@ -1,12 +1,26 @@
 #![cfg(test)]
 use super::*;
-use frame_support::{impl_outer_event, impl_outer_origin, parameter_types};
+use frame_support::{
+  impl_outer_event, impl_outer_origin, parameter_types,
+  weights::{
+    Weight,
+    constants::{WEIGHT_PER_SECOND, BlockExecutionWeight, ExtrinsicBaseWeight},
+    DispatchClass,
+  },
+};
+use frame_system::{limits};
+
 use sp_core::H256;
 use sp_runtime::{testing::Header, traits::IdentityLookup, Perbill};
 use sp_std::cell::RefCell;
 use std::collections::HashMap;
 pub use pallet_balances::Call as BalancesCall;
 use clover_traits::{IncentiveOps, IncentivePoolAccountInfo, };
+use orml_traits::parameter_type_with_key;
+// use sp_std::marker;
+// use orml_traits::{
+//   MultiCurrency, OnDust,
+// };
 
 pub use primitives::{
   AccountId, AccountIndex, Amount, Balance,
@@ -40,13 +54,41 @@ impl_outer_origin! {
   pub enum Origin for TestRuntime {}
 }
 
-parameter_types! {
-  pub const BlockHashCount: u64 = 250;
-  pub const MaximumBlockWeight: u32 = 1024;
-  pub const MaximumBlockLength: u32 = 2 * 1024;
-  pub const AvailableBlockRatio: Perbill = Perbill::one();
-}
+pub const MAXIMUM_BLOCK_WEIGHT: Weight = 2 * WEIGHT_PER_SECOND;
+// pub const MaximumBlockWeight: Weight = 2 * WEIGHT_PER_SECOND;
+pub const NORMAL_DISPATCH_RATIO: Perbill = Perbill::from_percent(75);
+pub const AVERAGE_ON_INITIALIZE_RATIO: Perbill = Perbill::from_perthousand(25);
 
+
+parameter_types! {
+  pub BlockLength: limits::BlockLength =
+    limits::BlockLength::max_with_normal_ratio(5 * 1024 * 1024, NORMAL_DISPATCH_RATIO);
+
+  pub const BlockHashCount: BlockNumber = 2400;
+  /// We allow for 2 seconds of compute with a 6 second average block time.
+  pub BlockWeights: limits::BlockWeights = limits::BlockWeights::builder()
+		.base_block(BlockExecutionWeight::get())
+		.for_class(DispatchClass::all(), |weights| {
+			weights.base_extrinsic = ExtrinsicBaseWeight::get();
+		})
+		.for_class(DispatchClass::Normal, |weights| {
+			weights.max_total = Some(NORMAL_DISPATCH_RATIO * MAXIMUM_BLOCK_WEIGHT);
+		})
+		.for_class(DispatchClass::Operational, |weights| {
+			weights.max_total = Some(MAXIMUM_BLOCK_WEIGHT);
+			// Operational transactions have an extra reserved space, so that they
+			// are included even if block reached `MAXIMUM_BLOCK_WEIGHT`.
+			weights.reserved = Some(
+				MAXIMUM_BLOCK_WEIGHT - NORMAL_DISPATCH_RATIO * MAXIMUM_BLOCK_WEIGHT,
+			);
+		})
+		.avg_block_initialization(AVERAGE_ON_INITIALIZE_RATIO)
+    .build_or_panic();
+
+  // pub const AvailableBlockRatio: Perbill = Perbill::from_percent(75);
+  // pub const Version: RuntimeVersion = VERSION;
+  pub const SS58Prefix: u8 = 229; // Ss58AddressFormat::CloverAccount
+}
 impl frame_system::Config for TestRuntime {
   type Origin = Origin;
   type Index = u64;
@@ -58,21 +100,18 @@ impl frame_system::Config for TestRuntime {
   type Lookup = IdentityLookup<Self::AccountId>;
   type Header = Header;
   type Event = TestEvent;
-  type BlockHashCount = BlockHashCount;
-  type MaximumBlockWeight = MaximumBlockWeight;
-  type MaximumBlockLength = MaximumBlockLength;
-  type AvailableBlockRatio = AvailableBlockRatio;
   type Version = ();
   type PalletInfo = ();
   type AccountData = pallet_balances::AccountData<Balance>;
   type OnNewAccount = ();
   type OnKilledAccount = ();
   type DbWeight = ();
-  type BlockExecutionWeight = ();
-  type ExtrinsicBaseWeight = ();
-  type MaximumExtrinsicWeight = ();
   type BaseCallFilter = ();
   type SystemWeightInfo = ();
+  type BlockHashCount = BlockHashCount;
+  type BlockWeights = BlockWeights;
+  type BlockLength = BlockLength;
+  type SS58Prefix = SS58Prefix;
 }
 
 pub type System = frame_system::Module<TestRuntime>;
@@ -96,13 +135,30 @@ impl pallet_balances::Config for TestRuntime {
 
 pub type Balances = pallet_balances::Module<TestRuntime>;
 
-impl orml_tokens::Trait for TestRuntime {
+parameter_type_with_key! {
+	pub ExistentialDeposits: |currency_id: CurrencyId| -> Balance {
+		match currency_id {
+			&BTC => 1,
+			&DOT => 2,
+			_ => 0,
+		}
+	};
+}
+
+
+
+parameter_types! {
+	pub DustAccount: AccountId = ModuleId(*b"orml/dst").into_account();
+}
+
+impl orml_tokens::Config for TestRuntime {
   type Event = TestEvent;
   type Balance = Balance;
   type Amount = Amount;
   type CurrencyId = CurrencyId;
-  type OnReceived = ();
   type WeightInfo = ();
+  type ExistentialDeposits = ExistentialDeposits;
+  type OnDust = ();
 }
 
 pub type Tokens = orml_tokens::Module<TestRuntime>;
@@ -111,7 +167,7 @@ parameter_types! {
   pub const GetNativeCurrencyId: CurrencyId = CurrencyId::CLV;
 }
 
-impl orml_currencies::Trait for TestRuntime {
+impl orml_currencies::Config for TestRuntime {
   type Event = TestEvent;
   type MultiCurrency = Tokens;
   type NativeCurrency = BasicCurrencyAdapter<TestRuntime, Balances, Amount, BlockNumber>;
@@ -126,7 +182,7 @@ parameter_types! {
   pub const CloverdexModuleId: ModuleId = ModuleId(*b"clv/dexm");
 }
 
-impl Trait for TestRuntime {
+impl Config for TestRuntime {
   type Event = TestEvent;
   type Currency = Currencies;
   type Share = Share;
